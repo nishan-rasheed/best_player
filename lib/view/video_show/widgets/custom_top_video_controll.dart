@@ -85,7 +85,7 @@ class CustomTopVideoControll extends StatelessWidget {
                                                     onChanged: (v) {}),
                                                 Text(
                                                   item?.language ?? '',
-                                                  style: TextStyle(
+                                                  style:const TextStyle(
                                                       color: Colors.white),
                                                 )
                                               ],
