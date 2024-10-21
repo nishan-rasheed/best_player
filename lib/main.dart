@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         designSize:const Size(390, 844),
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'video player',
+          title: 'best player',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
