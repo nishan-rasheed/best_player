@@ -1,5 +1,6 @@
 import 'dart:async';
-
+import 'dart:convert';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +9,7 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:mx_p/constants/app_constants.dart';
 import 'package:mx_p/constants/custom_log.dart';
 import 'package:mx_p/services/volume_services.dart';
+import 'package:mx_p/utils/extentions/list_extension.dart';
 import 'package:mx_p/view/video_show/shared/timer_manager.dart';
 import 'package:mx_p/view/video_show/widgets/custom_bottom_video_controlls.dart';
 import 'package:provider/provider.dart';
@@ -44,6 +46,8 @@ class _MediaDemoTestState extends State<MediaDemoTest> {
   //local data 
 
   List<AudioTrack>? audioTracks;
+  List<SubtitleTrack>? subTitleTrack;
+  List<VideoTrack>?  videoTrack;
 
 
 
@@ -71,8 +75,11 @@ class _MediaDemoTestState extends State<MediaDemoTest> {
   }
 
   Future initialiseVideo() async {
-      await player.open(Media(widget.filePath),);
+      await player.open(Media(widget.filePath),
+      play: true
+      );
        controller = VideoController(player,);
+      
     //add listner
     listenVideoStateAndPosition();
     listenVolumeChanges();
@@ -82,7 +89,6 @@ class _MediaDemoTestState extends State<MediaDemoTest> {
     if (mounted) {
       _volumeServices.startVolumeListner(
       (volume) {
-
         setSystemVolumeToVideoVolume(volume);
         context.read<VideoPlayerProvider>().updateVideoVolumeOnVerticalDrag(volume);    
       },
@@ -92,11 +98,10 @@ class _MediaDemoTestState extends State<MediaDemoTest> {
   }
 
   listenVideoStateAndPosition() {
-    if (mounted) {
       
       //listen playing state
-      player.stream.playing.listen(
-      (bool playing) {
+      player.stream.playing.listen((bool playing) {
+        customLog('play state----$playing');
         context.read<VideoPlayerProvider>().getVideoPlayingState(playing);
       },
     );
@@ -108,22 +113,33 @@ class _MediaDemoTestState extends State<MediaDemoTest> {
       },
     );
    
-    //listen width
+    // //listen width
      player.stream.width.listen((event) {
       if (event !=0 && event!=null) {
-        audioTracks = player.state.tracks.audio;
-        // VideoPlayerServices.chooseOrientModeOnStart(player);
+        
+        audioTracks = player.state.tracks.audio.where((e) => e!=AudioTrack.auto()&&e!=AudioTrack.no()).toList();
+        subTitleTrack = player.state.tracks.subtitle.where((e) => e!=SubtitleTrack.auto()&&e!=SubtitleTrack.no(),).toList();
+        videoTrack = player.state.tracks.video;
+         
+      //  audioTracks?.move(audioTracks?.indexWhere((e) =>e==AudioTrack.no(),)??0,);
+      //  subTitleTrack?.move(subTitleTrack?.indexWhere((e) =>e==SubtitleTrack.no(),)??0,);
+
+        customLog('data-${player.state.tracks.audio}');
+       // _moveItemToLast(audioTracks);
         chooseOrientation();
-         context.read<VideoPlayerProvider>().checkPlayerInitialized(true);
+        context.read<VideoPlayerProvider>().checkPlayerInitialized(true);
         
       }
     },);
 
 
-    }
+    // player.stream.tracks.listen((event) {
+    //    customLog('videotrack ===${event.subtitle}');
+    // },);
+
+
     
   }
-
 
 
   chooseOrientation(){
@@ -159,6 +175,9 @@ class _MediaDemoTestState extends State<MediaDemoTest> {
               
             },
             child: Scaffold(
+              // floatingActionButton: FloatingActionButton(onPressed: (){
+              //   customLog(videoTrack);
+              // }),
               drawerScrimColor: Colors.transparent,
               onEndDrawerChanged: (isOpened) {
                 if (isOpened) {
@@ -228,6 +247,11 @@ class _MediaDemoTestState extends State<MediaDemoTest> {
                                 key: key,
                                 controller: controller!,
                                  controls: null,
+                                //  subtitleViewConfiguration: SubtitleViewConfiguration(
+                                //   style: TextStyle(
+                                //     color: Colors.green
+                                //   )
+                                //  ),
                               )),
                            CustomTopVideoControll(
                             player: player,
@@ -256,6 +280,7 @@ class _MediaDemoTestState extends State<MediaDemoTest> {
                               child: CustomBottomVideoControlls(
                                 player: player,
                                 orientation: orientation,
+                                subtitleTrack: subTitleTrack??[],
                                 onVolumeButtonClicked: () {
                                   var currentVolume =
                                       context.read<VideoPlayerProvider>().videoVolume;

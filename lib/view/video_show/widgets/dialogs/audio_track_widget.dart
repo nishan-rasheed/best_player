@@ -17,6 +17,7 @@ class AudioTrackWidget extends StatelessWidget {
   final List<AudioTrack>? track;
   final Player player;
 
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -39,11 +40,11 @@ class AudioTrackWidget extends StatelessWidget {
           ],
         ),
         Expanded(
-          child: ListView(
+          child: Column(
             children: [
               ListView.separated(
                 shrinkWrap: true,
-                physics: ScrollPhysics(),
+                physics: const ScrollPhysics(),
                 itemCount: track?.length ?? 0,
                 separatorBuilder:
                     (BuildContext context, int index) {
@@ -56,8 +57,7 @@ class AudioTrackWidget extends StatelessWidget {
                      selector: (p0, p1) => p1.selectedAudioTrack,
                      builder: (context, selectedAudioTrack, child) => 
                       RadioListTile(
-                      
-                      title: Text(item?.language ?? '',
+                      title:Text(item==AudioTrack.no()?'Disable Audio':item?.language ?? '',
                       style: TextStyle(
                         color: AppColor.contentForeGroundColor
                       ),
@@ -72,7 +72,21 @@ class AudioTrackWidget extends StatelessWidget {
                   );
                 },
               ),
-              Checkbox(value: false, onChanged: (v) {})
+              Selector<VideoPlayerProvider,bool>(
+                selector: (p0, p1) => p1.isAudioDisabled,
+                builder: (context, isAudioDisabled, child) => 
+                CheckboxListTile(
+                  value: isAudioDisabled,
+                  title: Text(
+                    'Disable Audio',
+                    style: TextStyle(color: AppColor.contentForeGroundColor),
+                  ),
+                  onChanged: (v) async {
+                    context.read<VideoPlayerProvider>().disableAudio(v??false);
+                    player.setAudioTrack(AudioTrack.no());
+                    
+                  }),
+              )
             ],
           ),
         )

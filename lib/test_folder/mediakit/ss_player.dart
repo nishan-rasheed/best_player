@@ -35,11 +35,9 @@ class _SinglePlayerSingleVideoScreenState
     player.open(Media(widget.video));
     player.stream.error.listen((error) => debugPrint(error));
 
-  // player.stream.videoParams.listen((event) {
-  //   if (event.dw!=null) {
-  //     customLog('params ---$event');
-  //   }
-  // },);
+  player.stream.playing.listen((event) {
+     customLog('play state ---$event');
+  },);
 
     // player.stream.duration.listen((event) {
       

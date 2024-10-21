@@ -63,8 +63,8 @@ class _ListDetailScreenState extends State<ListDetailScreen> {
                     builder: (context) =>
                         ChangeNotifierProvider(
                           create: (context) => VideoPlayerProvider(),
-                        // child: SinglePlayerSingleVideoScreen(video: widget.videos[index],),
-                       child: MediaDemoTest(filePath: widget.videos[index],),
+                       //child: SinglePlayerSingleVideoScreen(video: widget.videos[index],),
+                      child: MediaDemoTest(filePath: widget.videos[index],),
                           //child: VideoScreen(videoPath: widget.videos[index])
                           )),
               ),

@@ -24,6 +24,7 @@ checkPlayerInitialized(bool value){
 bool isMKVideoPlaying = false;
 
 getVideoPlayingState(bool videoPlayState){
+  customLog('currentState---$videoPlayState');
   isMKVideoPlaying = videoPlayState;
   notifyListeners();
 }
@@ -51,10 +52,36 @@ upDateDrawerContent(WidgetBuilder child){
 //audio
 
 int selectedAudioTrack = 0;
+bool isAudioDisabled = false;
 
 updateAudioTrack(int index){
  selectedAudioTrack = index;
+ isAudioDisabled = false;
  notifyListeners();
+}
+
+disableAudio(bool value){
+selectedAudioTrack = -1;
+isAudioDisabled = value;
+notifyListeners();
+}
+
+
+//subtitle
+
+int selectedSubtitleTrack = 0;
+bool isSubtitleDisabled = false;
+
+
+updateSubtitleTrack(int index){
+ selectedSubtitleTrack = index;
+ notifyListeners();
+}
+
+disableSubtitle(bool value){
+selectedSubtitleTrack = -1;
+isSubtitleDisabled = value;
+notifyListeners();
 }
 
 

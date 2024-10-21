@@ -5,6 +5,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:mx_p/constants/app_constants.dart';
 import 'package:mx_p/constants/custom_log.dart';
 import 'package:mx_p/view/video_show/widgets/custom_progress_indicator.dart';
+import 'package:mx_p/view/video_show/widgets/dialogs/custom_subtitle_dialogue.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/app_colors.dart';
 import '../../../controller/video_player_controller.dart';
@@ -14,16 +15,25 @@ import '../../common_widgets/custom_video_iconbutton.dart';
 import '../shared/timer_manager.dart';
 
 class CustomBottomVideoControlls extends StatelessWidget {
-  CustomBottomVideoControlls({
+  const CustomBottomVideoControlls({
     super.key, 
     required this.player, 
-    required this.onVolumeButtonClicked, required this.onFullscreenButtonClicked, required this.orientation,
+    required this.onVolumeButtonClicked, required this.onFullscreenButtonClicked, required this.orientation, required this.subtitleTrack,
   });
   
   final Player player;
   final Orientation orientation ;
+  final List<SubtitleTrack> subtitleTrack;
   final Function() onVolumeButtonClicked;
   final Function() onFullscreenButtonClicked;
+
+
+
+   _openDrawerAndPassChild(
+      {required BuildContext context, required WidgetBuilder builder}) {
+    Scaffold.of(context).openEndDrawer();
+    context.read<VideoPlayerProvider>().upDateDrawerContent(builder);
+  }
   
 
   @override
@@ -169,14 +179,22 @@ class CustomBottomVideoControlls extends StatelessWidget {
                                       ),
                               if(orientation == Orientation.landscape)videoDuration(),       
                               const Spacer(),
-                               Selector<VideoPlayerProvider,double>(
-                                    selector: (p0, p1) => p1.videoVolume,
-                                    builder: (context, videoVolume, child) =>
-                                     CommonVideoIconButton(
-                                        onTap: (){},
+                               CommonVideoIconButton(
+                                        onTap: (){
+                                          if (subtitleTrack.isEmpty) {
+                                            
+                                          }
+                                          else{
+                                          _openDrawerAndPassChild(
+                                            context: context, 
+                                            builder: (context) =>
+                                            CustomSubtitleDialogue(track: subtitleTrack, player: player),
+                                            );
+                                          }
+                                          
+                                        },
                                         icon: Icons.subtitles,
                                       ),
-                                  ),
 
                                   CommonVideoIconButton(
                                         onTap: onFullscreenButtonClicked,

@@ -25,6 +25,7 @@ class CustomTopVideoControll extends StatelessWidget {
 
   _openDrawerAndPassChild(
       {required BuildContext context, required WidgetBuilder builder}) {
+     VideoPlayerServices.hideStatusBar();   
     Scaffold.of(context).openEndDrawer();
     context.read<VideoPlayerProvider>().upDateDrawerContent(builder);
   }
@@ -58,42 +59,41 @@ class CustomTopVideoControll extends StatelessWidget {
                         icon: Icons.audiotrack_rounded,
                         onTap: () {
                           if (orientation == Orientation.portrait) {
-                            VideoPlayerServices.hideStatusBar();
-                            showModalBottomSheet(
-                                barrierColor: Colors.transparent,
-                                context: context,
-                                backgroundColor: Colors.transparent,
-                                builder: (context) => Column(
-                                      children: [
-                                        Text("Audio Tracks"),
-                                        ListView.separated(
-                                          shrinkWrap: true,
-                                          itemCount: track?.length ?? 0,
-                                          separatorBuilder:
-                                              (BuildContext context,
-                                                  int index) {
-                                            return 10.verticalSpace;
-                                          },
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            var item = track?[index];
-                                            return Row(
-                                              children: [
-                                                Radio(
-                                                    value: true,
-                                                    groupValue: true,
-                                                    onChanged: (v) {}),
-                                                Text(
-                                                  item?.language ?? '',
-                                                  style:const TextStyle(
-                                                      color: Colors.white),
-                                                )
-                                              ],
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ));
+                            // showModalBottomSheet(
+                            //     barrierColor: Colors.transparent,
+                            //     context: context,
+                            //     backgroundColor: Colors.transparent,
+                            //     builder: (context) => Column(
+                            //           children: [
+                            //             Text("Audio Tracks"),
+                            //             ListView.separated(
+                            //               shrinkWrap: true,
+                            //               itemCount: track?.length ?? 0,
+                            //               separatorBuilder:
+                            //                   (BuildContext context,
+                            //                       int index) {
+                            //                 return 10.verticalSpace;
+                            //               },
+                            //               itemBuilder: (BuildContext context,
+                            //                   int index) {
+                            //                 var item = track?[index];
+                            //                 return Row(
+                            //                   children: [
+                            //                     Radio(
+                            //                         value: true,
+                            //                         groupValue: true,
+                            //                         onChanged: (v) {}),
+                            //                     Text(
+                            //                       item?.language ?? '',
+                            //                       style:const TextStyle(
+                            //                           color: Colors.white),
+                            //                     )
+                            //                   ],
+                            //                 );
+                            //               },
+                            //             ),
+                            //           ],
+                            //         ));
                           } else {
                             _openDrawerAndPassChild(
                               context: context,
